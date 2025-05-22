@@ -11,7 +11,7 @@ endif()
 find_package(OpenCV REQUIRED)
 
 add_executable(${PROJECT_NAME}
-    navigation.cpp
+    main.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${OpenCV_INCLUDE_DIRS})
