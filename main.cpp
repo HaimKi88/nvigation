@@ -13,20 +13,15 @@
 #include "AStar.cpp"
 
 
-int main(){
-    int height = 900, width = 1100;
-    // Point startPoint = {15, 15};
-    // Point goalPoint = {startPoint.x+60*10, startPoint.y+80*10};   
-    cv::Point startPoint = {15, 200};
-    cv::Point goalPoint = {startPoint.x+100*10, startPoint.y+40*10};   
-    
-    cv::Mat map;
-    cv::Point pt1,pt2;
-    int k = 0;
-    int result = 1;
-    AStar nav(&map, width, height, startPoint, goalPoint);
-    
-    /////////// obstacles: /////////////////
+cv::Mat map;
+int height = 900, width = 1100;
+int k = 0;
+int result = 1;
+cv::Point startPoint = {15, 200}; //{15, 15};
+cv::Point goalPoint = {startPoint.x+100*10, startPoint.y+40*10};  // {startPoint.x+60*10, startPoint.y+80*10};
+AStar nav(&map, width, height, startPoint, goalPoint);
+
+void obstacles(){
     for (int spaces = 100; spaces <= 700; spaces += 100 ){
         nav.drawWalls(cv::Point{spaces,320}, cv::Point{spaces+50,320});
     }
@@ -41,7 +36,11 @@ int main(){
     resize(robotImg, resizedRobot, cv::Size(), scale, scale);
     cv::Rect roi(cv::Point(800,10), resizedRobot.size());
     resizedRobot.copyTo(map(roi));
-    ///////////////////////////////////////
+}
+
+int main(){
+    obstacles();
+
     nav.initAlgo();
     
     while (true){
