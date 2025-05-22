@@ -1,0 +1,36 @@
+# Ignore build folder
+/build/
+
+# Ignore Visual Studio Code user-specific settings
+.vscode/*.code-workspace
+.vscode/*.history/
+.vscode/*.user
+.vscode/*.vsix
+
+# But keep project-specific VSCode config files (settings, tasks, launch)
+/.vscode/settings.json
+/.vscode/launch.json
+/.vscode/tasks.json
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled binaries and object files
+*.exe
+*.obj
+*.o
+*.dll
+*.lib
+*.so
+*.a
+
+# Ignore CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore logs and temporary files
+*.log
+*.tmp

@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <chrono>
 #include <vector>
+#include <thread>
 
 using namespace std;
 using namespace cv;
@@ -322,7 +323,7 @@ int main(){
     putText(map, "Robotics", Point(100, 560), HersheyFonts::FONT_HERSHEY_PLAIN, 7, nav.black, 10, LINE_AA);
     putText(map, "C++ / Python", Point(100, 690), HersheyFonts::FONT_HERSHEY_PLAIN, 7, nav.black, 10, LINE_AA);
     // robot picture
-    Mat robotImg = imread("C:\\Users\\Haim\\Documents\\development\\robot.png");
+    Mat robotImg = imread("C:\\Users\\Haim\\Documents\\development\\navigation\\robot.png");
     double scale = 0.5; 
     Mat resizedRobot;
     resize(robotImg, resizedRobot, Size(), scale, scale);
