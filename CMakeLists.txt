@@ -12,8 +12,6 @@ endif()
 find_package(OpenCV REQUIRED)
 
 add_executable(${PROJECT_NAME} 
-    # main.cpp
-    # multiThread.cpp
     navigation.cpp
     )
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
