@@ -6,14 +6,17 @@
 #include <thread>
 
 #include "Node_.h"
-#include "Navigator.h"
+#include "Node_.cpp"
+#include "NavigationSim.h"
+#include "NavigationSim.cpp"
+
 
 using namespace std;
 using namespace cv;
 
-class AStar : public Navigation {
+class AStar : public NavigationSim {
 public:
-    AStar(Mat* m, int w, int h, Point s, Point g) : Navigation(m, w, h, s, g){
+    AStar(Mat* m, int w, int h, Point s, Point g) : NavigationSim(m, w, h, s, g){
         cout << "-- A* navigation --\n";
     }
 
