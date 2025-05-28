@@ -5,21 +5,21 @@
 #include <array>
 #include <thread>
 
-#include "Node_.h"
 #include "Node_.cpp"
-#include "NavigationSim.h"
 #include "NavigationSim.cpp"
-#include "AStar.h"
 #include "AStar.cpp"
-
+#include "Record.cpp"
 
 cv::Mat map;
-int height = 900, width = 1100;
+int height = 950, width = 1689;
 int k = 0;
 int result = 1;
+bool firstRun = true;
 cv::Point startPoint = {15, 200}; //{15, 15};
 cv::Point goalPoint = {startPoint.x+100*10, startPoint.y+40*10};  // {startPoint.x+60*10, startPoint.y+80*10};
 AStar nav(&map, width, height, startPoint, goalPoint);
+
+std::string outputVideo = "C:\\Users\\Haim\\Documents\\development\\navigation\\pathFinding.avi";
 
 void obstacles(){
     for (int spaces = 100; spaces <= 700; spaces += 100 ){
@@ -39,19 +39,26 @@ void obstacles(){
 }
 
 int main(){
+    Record rec(map, outputVideo, true);
     obstacles();
 
     nav.initAlgo();
     
+    rec.init();
+    imshow("map", map);     // wait before starting
+    cv::waitKey(500);
+    
     while (true){
         imshow("map", map);
-        
+        rec.record(map);
+
         if (result == 1){
             result = nav.runAlgo(k); 
             k++;
         }
 
         if (cv::waitKey(1) == 'q') {
+            rec.endRecord();
             break;        
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(30));

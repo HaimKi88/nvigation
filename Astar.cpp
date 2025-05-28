@@ -105,7 +105,7 @@ void AStar::initAlgo(){
 int AStar::runAlgo(int k){
 
     auto [index, current] = lowestFcost(open); // node in open with lowest fcost
-    
+    // std::cout << "gcost: " << current.gcost << ", hcost: " << current.hcost << ", fcost: " << current.fcost  << std::endl;
     open.erase(open.begin() + index);          // remove current from open
     
     closed.push_back(current);                 // add current to closed
