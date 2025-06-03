@@ -24,6 +24,7 @@ Thumbs.db
 *.lib
 *.so
 *.a
+*.avi
 
 # Ignore CMake generated files
 CMakeFiles/

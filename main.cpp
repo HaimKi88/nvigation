@@ -4,6 +4,8 @@
 #include <vector>
 #include <array>
 #include <thread>
+#include <atomic>
+#include <condition_variable>
 
 #include "Node_.cpp"
 #include "NavigationSim.cpp"
@@ -12,12 +14,20 @@
 
 cv::Mat map;
 int height = 950, width = 1689;
-int k = 0;
-int result = 1;
 bool firstRun = true;
+
+std::mutex mtx;
+std::condition_variable agent_cv;
+bool sim_tick = false;
+std::atomic<bool> done = false;
+
 cv::Point startPoint = {15, 200}; //{15, 15};
-cv::Point goalPoint = {startPoint.x+100*10, startPoint.y+40*10};  // {startPoint.x+60*10, startPoint.y+80*10};
+cv::Point goalPoint = {startPoint.x+100*10, startPoint.y+60*10};  // {startPoint.x+60*10, startPoint.y+80*10};
+cv::Point startPoint2 = {15*5, 200*2}; //{15, 15};
+cv::Point goalPoint2 = {startPoint.x+100*10, startPoint.y+40*10};  // {startPoint.x+60*10, startPoint.y+80*10};
+
 AStar nav(&map, width, height, startPoint, goalPoint);
+AStar nav2(&map, width, height, startPoint2, goalPoint2);
 
 std::string outputVideo = "C:\\Users\\Haim\\Documents\\development\\navigation\\pathFinding.avi";
 
@@ -38,31 +48,60 @@ void obstacles(){
     resizedRobot.copyTo(map(roi));
 }
 
-int main(){
-    Record rec(map, outputVideo, true);
-    obstacles();
+void agent(int agentId, AStar* n){
+    int k = 0;
+    bool result = 1;
+    std::cout << "starting thread  " << agentId << std::endl;
+    n->initAlgo();
 
-    nav.initAlgo();
+    std::unique_lock<std::mutex> lock(mtx);
+    while(true){
+        agent_cv.wait(lock, [] { return sim_tick || done; });
+        if (done || result == 0) break;
+
+        result = n->runAlgo(k);
+        k++;
+        if (result == 0){
+            break;
+        }
+        sim_tick = false;
+    }
+    std::cout << "exiting agent thread " << agentId << std::endl;
+}
+
+int main(){
+    Record rec(map, outputVideo, false);
+    std::thread a1(agent, 1, &nav);
+    std::thread a2(agent, 2, &nav2);
+
+    obstacles();
     
     rec.init();
     imshow("map", map);     // wait before starting
     cv::waitKey(500);
     
+
     while (true){
         imshow("map", map);
         rec.record(map);
 
-        if (result == 1){
-            result = nav.runAlgo(k); 
-            k++;
+        {
+            std::lock_guard<std::mutex> lock(mtx);
+            sim_tick = true;
         }
+        agent_cv.notify_all();
 
         if (cv::waitKey(1) == 'q') {
             rec.endRecord();
+            done = true;
+            agent_cv.notify_all();
             break;        
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(30));
+        std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
+    a1.join();
+    a2.join();
+
     return 0;
 }
 
